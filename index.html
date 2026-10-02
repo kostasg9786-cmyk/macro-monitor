@@ -82,12 +82,7 @@
             <thead>
                 <tr><th>Ημερομηνία Καταγραφής</th><th>FINRA Margin Debt</th><th>Net Credit Balance</th><th>Ετήσια Μεταβολή</th><th>Fed Total Assets</th></tr>
             </thead>
-            <tbody id="weekly-radar-rows">
-                <tr class="alert-text"><td>24/09/2026</td><td>\$1.454 T</td><td>\(-1.029 T</td><td>37.15\%</td><td>\)6.748 T</td></tr>
-                <tr class="alert-text"><td>17/09/2026</td><td>\$1.454 T</td><td>\(-1.029 T</td><td>37.15\%</td><td>\)6.755 T</td></tr>
-                <tr class="alert-text"><td>10/09/2026</td><td>\$1.454 T</td><td>\(-1.029 T</td><td>37.15\%</td><td>\)6.762 T</td></tr>
-                <tr class="alert-text"><td>03/09/2026</td><td>\$1.454 T</td><td>\(-1.029 T</td><td>37.15\%</td><td>\)6.771 T</td></tr>
-            </tbody>
+            <tbody id="weekly-radar-rows"></tbody>
         </table>
     </div>
     <script>
@@ -113,8 +108,7 @@
                 let cls = row.change > 30 ? "alert-text" : row.change > 15 ? "warning-text" : "success-text";
                 wRows += `<tr class="${cls}"><td>${row.date}</td><td>$${(row.debit/1000000).toFixed(3)} T</td><td>$${(row.net_credit/1000000).toFixed(3)} T</td><td>${row.change.toFixed(2)}%</td><td>$${(row.fed/1000000).toFixed(3)} T</td></tr>`;
             });
-            let existingRows = document.getElementById('weekly-radar-rows').innerHTML;
-            document.getElementById('weekly-radar-rows').innerHTML = wRows + existingRows;
+            document.getElementById('weekly-radar-rows').innerHTML = wRows;
         }).catch(e => console.log(e));
     </script>
 </body>
