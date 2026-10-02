@@ -14,9 +14,9 @@ def get_finra_data():
         rows = table.find_all('tr')
         
         current_month_data = rows.find_all('td')
-        debit_margin = float(current_month_data[0].text.replace(',', ''))
-        free_cash = float(current_month_data[1].text.replace(',', ''))
-        margin_cash = float(current_month_data[2].text.replace(',', ''))
+        debit_margin = float(current_month_data[1].text.replace(',', ''))
+        free_cash = float(current_month_data[2].text.replace(',', ''))
+        margin_cash = float(current_month_data[3].text.replace(',', ''))
         
         prev_year_debit = 1060000.0
         
@@ -31,7 +31,7 @@ total_cash = cash1 + cash2
 net_credit_balance = total_cash - debit
 yearly_change = ((debit - past_debit) / past_debit) * 100
 
-# Αποστολή στο Telegram (Θωρακισμένη σύνθεση URL)
+# Αποστολή στο Telegram (Με σωστή μορφή JSON)
 bot_token = os.environ.get("TELEGRAM_TOKEN")
 chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
@@ -44,13 +44,13 @@ if bot_token and chat_id:
         f"• Ετήσια Μεταβολή: {yearly_change:.2f}% (Όριο: 30%)\n\n"
         f"Δείτε το Live Dashboard: https://github.io"
     )
-    # Αλλαγή: Χωρίζουμε το Token από το Domain για να μην μπερδεύεται το GitHub Masking
-    base_url = "https://telegram.org"
+    base_url = "https://api.telegram.org"
     telegram_url = f"{base_url}/bot{bot_token}/sendMessage"
     payload = {"chat_id": chat_id, "text": message}
     try:
-        requests.post(telegram_url, data=payload)
-        print("Telegram notification trigger sent successfully.")
+        # Διόρθωση: Χρήση json= αντί για data= για σωστή επικοινωνία με το API
+        r = requests.post(telegram_url, json=payload)
+        print(f"Telegram API Response: {r.status_code} - {r.text}")
     except Exception as e:
         print(f"Telegram error: {e}")
 
