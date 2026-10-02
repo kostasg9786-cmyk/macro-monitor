@@ -1,9 +1,6 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 def get_finra_data():
     url = "https://finra.org"
@@ -16,14 +13,11 @@ def get_finra_data():
         table = soup.find('table')
         rows = table.find_all('tr')
         
-        # Εντοπισμός των δεδομένων από τις γραμμές του πίνακα
-        # Λόγω της δυναμικής δομής της FINRA, αν προκύψει αλλαγή χρησιμοποιούμε fallback
-        current_month_data = rows[1].find_all('td')
-        debit_margin = float(current_month_data[1].text.replace(',', ''))
-        free_cash = float(current_month_data[2].text.replace(',', ''))
-        margin_cash = float(current_month_data[3].text.replace(',', ''))
+        current_month_data = rows.find_all('td')
+        debit_margin = float(current_month_data.text.replace(',', ''))
+        free_cash = float(current_month_data.text.replace(',', ''))
+        margin_cash = float(current_month_data.text.replace(',', ''))
         
-        # Fallback τιμή για το προηγούμενο έτος (Αύγουστος 2025: 1.060T) για τον υπολογισμό ρυθμού
         prev_year_debit = 1060000.0
         
         return debit_margin, free_cash, margin_cash, prev_year_debit
@@ -35,36 +29,30 @@ debit, cash1, cash2, past_debit = get_finra_data()
 
 total_cash = cash1 + cash2
 net_credit_balance = total_cash - debit
-debt_to_cash_ratio = debit / total_cash if total_cash > 0 else 0
 yearly_change = ((debit - past_debit) / past_debit) * 100
 
-# 3. Αυτόματο Email Alert (Αν ο κίνδυνος είναι > 30%)
+# Αποστολή Telegram Alert αν η ετήσια μεταβολή ξεπερνά το 30%
 THRESHOLD = 30.0
 if yearly_change > THRESHOLD:
-    sender_email = os.environ.get("SENDER_EMAIL")
-    sender_password = os.environ.get("SENDER_PASSWORD")
-    receiver_email = os.environ.get("RECEIVER_EMAIL")
+    bot_token = os.environ.get("TELEGRAM_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     
-    if sender_email and sender_password and receiver_email:
-        msg = MIMEMultipart()
-        msg['From'] = sender_email
-        msg['To'] = receiver_email
-        msg['Subject'] = "🚨 ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ: Ακραία Μόχλευση στην Αγορά!"
-        
-        body = f"Προσοχή! Ο δείκτης FINRA Margin Debt παρουσιάζει ακραία ετήσια αύξηση.\n\nΤρέχον Χρέος Margin: ${debit/1000000:.3f} Τρις\nΕτήσια Μεταβολή: {yearly_change:.2f}% (Όριο ασφαλείας: 30%)\nNet Credit Balance: ${net_credit_balance/1000000:.3f} Τρις\n\nΤο συστημικό ρίσκο forced selling είναι εξαιρετικά υψηλό."
-        msg.attach(MIMEText(body, 'plain'))
-        
+    if bot_token and chat_id:
+        message = (
+            f"🚨 ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ: Ακραία Μόχλευση στην Αγορά!\n\n"
+            f"Τρέχον Χρέος Margin: ${debit/1000000:.3f} Τρις\n"
+            f"Ετήσια Μεταβολή: {yearly_change:.2f}% (Όριο: 30%)\n"
+            f"Net Credit Balance: ${net_credit_balance/1000000:.3f} Τρις\n\n"
+            f"Το συστημικό ρίσκο forced selling είναι εξαιρετικά υψηλό."
+        )
+        telegram_url = f"https://telegram.org{bot_token}/sendMessage"
         try:
-            server = smtplib.SMTP('://gmail.com', 587)
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, receiver_email, msg.as_string())
-            server.quit()
-            print("Το Email Alert στάλθηκε επιτυχώς!")
+            requests.post(telegram_url, data={{"chat_id": chat_id, "text": message}})
+            print("Το Telegram Alert στάλθηκε επιτυχώς!")
         except Exception as e:
-            print(f"Αποτυχία αποστολής email: {e}")
+            print(f"Αποτυχία αποστολής Telegram: {e}")
 
-# 4. Δημιουργία του HTML Dashboard
+# Δημιουργία του HTML Dashboard
 html_content = f"""
 <!DOCTYPE html>
 <html lang="el">
@@ -96,3 +84,4 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
+print("Dashboard updated successfully!")
