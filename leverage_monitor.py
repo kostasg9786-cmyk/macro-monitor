@@ -37,7 +37,7 @@ chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
 if bot_token and chat_id:
     # Εδώ ορίζουμε το Link πεντακάθαρα για να μην κόβεται
-    live_url = "https://github.io"
+    live_url = "https://kostasg9786-cmyk.github.io/macro-monitor/"
     
     message = (
         f"📊 ΜΗΝΙΑΙΑ ΕΝΗΜΕΡΩΣΗ ΜΟΧΛΕΥΣΗΣ\n\n"
