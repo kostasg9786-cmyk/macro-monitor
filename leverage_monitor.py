@@ -12,9 +12,9 @@ def get_finra_data():
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table')
         current_month_data = table.find_all('tr').find_all('td')
-        debit_margin = float(current_month_data.text.replace(',', ''))
-        free_cash = float(current_month_data.text.replace(',', ''))
-        margin_cash = float(current_month_data.text.replace(',', ''))
+        debit_margin = float(current_month_data[0].text.replace(',', ''))
+        free_cash = float(current_month_data[1].text.replace(',', ''))
+        margin_cash = float(current_month_data[2].text.replace(',', ''))
         prev_year_debit = 1060000.0
         return debit_margin, free_cash, margin_cash, prev_year_debit
     except Exception as e:
@@ -82,7 +82,7 @@ if bot_token and chat_id:
     except:
         pass
 
-# Αποθήκευση των τρεχόντων δεδομένων σε JSON για να τα διαβάζει η HTML
+# Αποθήκευση δεδομένων σε JSON
 live_data = {
     "debit": f"${debit/1000000:.3f} T",
     "credit": f"${net_credit_balance/1000000:.3f} T",
@@ -94,4 +94,4 @@ live_data = {
 with open("live_data.json", "w", encoding="utf-8") as f:
     json.dump(live_data, f, ensure_ascii=False, indent=4)
 
-print("Data process completed with 100% success.")
+print("Python process completed with 100% success.")
