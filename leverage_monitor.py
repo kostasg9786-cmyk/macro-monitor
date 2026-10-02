@@ -11,10 +11,10 @@ def get_finra_data():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table')
-        current_month_data = table.find_all('tr')[1].find_all('td')
-        debit_margin = float(current_month_data[0].text.replace(',', ''))
-        free_cash = float(current_month_data[1].text.replace(',', ''))
-        margin_cash = float(current_month_data[2].text.replace(',', ''))
+        current_month_data = table.find_all('tr').find_all('td')
+        debit_margin = float(current_month_data.text.replace(',', ''))
+        free_cash = float(current_month_data.text.replace(',', ''))
+        margin_cash = float(current_month_data.text.replace(',', ''))
         prev_year_debit = 1060000.0
         return debit_margin, free_cash, margin_cash, prev_year_debit
     except Exception as e:
@@ -82,46 +82,31 @@ if bot_token and chat_id:
     except:
         pass
 
-# Δημιουργία των σειρών για το Εβδομαδιαίο Ραντάρ (Καρτέλα 3)
 weekly_rows = ""
 for row in reversed(history_data):
     status_class = "alert-text" if row['change'] > 30 else "warning-text" if row['change'] > 15 else "success-text"
-    weekly_rows += f"""
-    <tr class="{status_class}">
-        <td>{row['date']}</td>
-        <td>${row['debit']/1000000:.3f} T</td>
-        <td>${row['net_credit']/1000000:.3f} T</td>
-        <td>{row['change']:.2f}%</td>
-        <td>${row['fed']/1000000:.3f} T</td>
-    </tr>
-    """
+    weekly_rows += f'<tr class="{status_class}"><td>{row["date"]}</td><td>${row["debit"]/1000000:.3f} T</td><td>${row["net_credit"]/1000000:.3f} T</td><td>{row["change"]:.2f}%</td><td>${row["fed"]/1000000:.3f} T</td></tr>'
 
-# Καθαρή HTML χωρίς f-string για την αποφυγή SyntaxError με τα άγκιστρα
-html_content = """
-<!DOCTYPE html>
+# Καθαρή HTML ως απλό string, χωρίς f-string για να μην μπερδεύονται τα άγκιστρα
+html_template = """<!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
     <title>Institutional Macro Matrix</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; text-align: center; }
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; text-align: center; }
         .card { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 20px; display: inline-block; width: 85%; }
         .grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
         .value { font-size: 28px; font-weight: bold; color: #38bdf8; }
-        
         .tab-container { margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 85%; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }
-        .tab-btn:hover { border-color: #38bdf8; color: #f8fafc; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; }
         .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
-        
         .tab-content { display: none; width: 85%; margin: 0 auto; }
         .tab-content.active { display: block; }
-        
         table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; margin-top: 15px; }
         th, td { padding: 14px; text-align: center; border-bottom: 1px solid #334155; font-size: 14px; }
         th { background: #1e1b4b; color: #38bdf8; font-weight: bold; }
         tr:hover { background: #334155; }
-        
         .alert-text { color: #ef4444; font-weight: bold; }
         .warning-text { color: #f59e0b; font-weight: bold; }
         .success-text { color: #10b981; font-weight: bold; }
@@ -129,26 +114,21 @@ html_content = """
 </head>
 <body>
     <h1>📊 Institutional Macro Leverage & Liquidity Matrix</h1>
-    
     <div class="card">
         <h2>Συστημική Κατάσταση Κινδύνου</h2>
         <p class="alert-text" style="font-size:24px;">⚠️ ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ (Ακραία Μόχλευση & Ποσοτική Σύσφιξη Fed)</p>
     </div>
-    
     <div class="grid">
-        <div class="card" style="width:200px;"><h3>Margin Debt</h3><p class="value" id="val-debit">$0.000 T</p></div>
-        <div class="card" style="width:200px;"><h3>Credit Balance</h3><p class="value" style="color:#f43f5e" id="val-credit">$-0.000 T</p></div>
-        <div class="card" style="width:200px;"><h3>Μεταβολή YoY</h3><p class="value" style="color:#f59e0b" id="val-change">0.00%</p></div>
-        <div class="card" style="width:200px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7" id="val-fed">$0.000 T</p></div>
+        <div class="card" style="width:200px;"><h3>Margin Debt</h3><p class="value">__DEBIT__</p></div>
+        <div class="card" style="width:200px;"><h3>Credit Balance</h3><p class="value" style="color:#f43f5e">__CREDIT__</p></div>
+        <div class="card" style="width:200px;"><h3>Μεταβολή YoY</h3><p class="value" style="color:#f59e0b">__CHANGE__</p></div>
+        <div class="card" style="width:200px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7">__FED__</p></div>
     </div>
-
     <div class="tab-container">
         <button class="tab-btn active" onclick="switchTab('tab1')">🏛️ 1. Ιστορικά Ορόσημα Κρίσεων</button>
         <button class="tab-btn" onclick="switchTab('tab2')">📅 2. Μηνιαία Εξέλιξη Κύκλου</button>
         <button class="tab-btn" onclick="switchTab('tab3')">⚡ 3. Εβδομαδιαίο Ραντάρ (Live)</button>
     </div>
-
-    <!-- ΚΑΡΤΕΛΑ 1: ΙΣΤΟΡΙΚΑ ΟΡΟΣΗΜΑ -->
     <div id="tab1" class="tab-content active">
         <table>
             <thead>
@@ -164,10 +144,10 @@ html_content = """
             <tbody>
                 <tr class="alert-text" style="background: rgba(239, 68, 68, 0.1);">
                     <td>Οκτώβριος 2026 (Σήμερα)</td>
-                    <td id="t1-debit">$0.000 T</td>
-                    <td id="t1-credit">$-0.000 T</td>
-                    <td id="t1-change">0.00%</td>
-                    <td id="t1-fed">$0.000 T</td>
+                    <td>__DEBIT__</td>
+                    <td>__CREDIT__</td>
+                    <td>__CHANGE__</td>
+                    <td>__FED__</td>
                     <td>🚨 Ακραία Μόχλευση (Σημερινή Κορυφή Φούσκας)</td>
                 </tr>
                 <tr class="alert-text">
@@ -213,8 +193,6 @@ html_content = """
             </tbody>
         </table>
     </div>
-
-    <!-- ΚΑΡΤΕΛΑ 2: ΜΗΝΙΑΙΑ ΕΞΕΛΙΞΗ ΚΥΚΛΟΥ -->
     <div id="tab2" class="tab-content">
         <table>
             <thead>
@@ -228,3 +206,6 @@ html_content = """
                 </tr>
             </thead>
             <tbody>
+                <tr class="alert-text"><td>Οκτώβριος 2026</td><td>__DEBIT__</td><td>__CREDIT__</td><td>__CHANGE__</td><td>__FED__</td><td>🚨 Κορυφή Μανίας</td></tr>
+                <tr class="alert-text"><td>Σεπτέμβριος 2026</td><td>$1.410 T</td><td>$-0.990 T</td><td>+34.20%</td><td>$6.790 T</td><td>🚨 Διόγκωση Χρέους</td></tr>
+                <tr class="alert-text"><td>Αύγουστος 2026</td><td>$1.390 T</td><td>$-0.950 T</td><td>+31.50%</td><td>$6.820 T</td><td>🚨 Παραβίαση Ορίου 30%</td></tr>
