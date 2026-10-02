@@ -14,9 +14,9 @@ def get_finra_data():
         rows = table.find_all('tr')
         
         current_month_data = rows.find_all('td')
-        debit_margin = float(current_month_data.text.replace(',', ''))
-        free_cash = float(current_month_data.text.replace(',', ''))
-        margin_cash = float(current_month_data.text.replace(',', ''))
+        debit_margin = float(current_month_data[0].text.replace(',', ''))
+        free_cash = float(current_month_data[1].text.replace(',', ''))
+        margin_cash = float(current_month_data[2].text.replace(',', ''))
         
         prev_year_debit = 1060000.0
         
@@ -31,11 +31,12 @@ total_cash = cash1 + cash2
 net_credit_balance = total_cash - debit
 yearly_change = ((debit - past_debit) / past_debit) * 100
 
+# Αποστολή στο Telegram
 bot_token = os.environ.get("TELEGRAM_TOKEN")
 chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
 if bot_token and chat_id:
-    # Εδώ είναι το πλήρες link σου σπασμένο σωστά για να μην κρύβεται
+    # Εδώ ορίζουμε το Link πεντακάθαρα για να μην κόβεται
     live_url = "https://github.io"
     
     message = (
@@ -44,7 +45,7 @@ if bot_token and chat_id:
         f"• Χρέος Margin: ${debit/1000000:.3f} Τρις\n"
         f"• Net Credit Balance: ${net_credit_balance/1000000:.3f} Τρις\n"
         f"• Ετήσια Μεταβολή: {yearly_change:.2f}% (Όριο: 30%)\n\n"
-        f"Δείτε το Live Dashboard: {live_url}"
+        f"Δείτε το Live Dashboard:\n{live_url}"
     )
     base_url = "https://telegram.org"
     telegram_url = f"{base_url}/bot{bot_token}/sendMessage"
@@ -55,6 +56,7 @@ if bot_token and chat_id:
     except Exception as e:
         print(f"Telegram error: {e}")
 
+# Δημιουργία του HTML Dashboard
 html_content = f"""
 <!DOCTYPE html>
 <html lang="el">
