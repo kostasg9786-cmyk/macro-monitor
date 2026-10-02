@@ -1,0 +1,35 @@
+name: Update Macro Monitor
+
+on:
+  schedule:
+    - cron: '0 12 25 * *' # Τρέχει μόνο του κάθε 25 του μηνός στις 12:00
+  workflow_dispatch: # Σας επιτρέπει να το τρέχετε και χειροκίνητα όποτε θέλετε
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        pip install requests beautifulsoup4
+
+    - name: Run Scraper & Alert System
+      env:
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+        SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+        RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+      run: python leverage_monitor.py
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: .
+        branch: gh-pages
