@@ -11,10 +11,10 @@ def get_finra_data():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table')
-        current_month_data = table.find_all('tr').find_all('td')
-        debit_margin = float(current_month_data.text.replace(',', ''))
-        free_cash = float(current_month_data.text.replace(',', ''))
-        margin_cash = float(current_month_data.text.replace(',', ''))
+        current_month_data = table.find_all('tr')[1].find_all('td')
+        debit_margin = float(current_month_data[0].text.replace(',', ''))
+        free_cash = float(current_month_data[1].text.replace(',', ''))
+        margin_cash = float(current_month_data[2].text.replace(',', ''))
         prev_year_debit = 1060000.0
         return debit_margin, free_cash, margin_cash, prev_year_debit
     except Exception as e:
@@ -96,34 +96,35 @@ for row in reversed(history_data):
     </tr>
     """
 
-html_content = f"""
+# Καθαρή HTML χωρίς f-string για την αποφυγή SyntaxError με τα άγκιστρα
+html_content = """
 <!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
     <title>Institutional Macro Matrix</title>
     <style>
-        body {{ font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; text-align: center; }}
-        .card {{ background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 20px; display: inline-block; width: 85%; }}
-        .grid {{ display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }}
-        .value {{ font-size: 28px; font-weight: bold; color: #38bdf8; }}
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; text-align: center; }
+        .card { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 20px; display: inline-block; width: 85%; }
+        .grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+        .value { font-size: 28px; font-weight: bold; color: #38bdf8; }
         
-        .tab-container {{ margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 85%; }}
-        .tab-btn {{ background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }}
-        .tab-btn:hover {{ border-color: #38bdf8; color: #f8fafc; }}
-        .tab-btn.active {{ background: #38bdf8; color: #0f172a; border-color: #38bdf8; }}
+        .tab-container { margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 85%; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }
+        .tab-btn:hover { border-color: #38bdf8; color: #f8fafc; }
+        .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
         
-        .tab-content {{ display: none; width: 85%; margin: 0 auto; }}
-        .tab-content.active {{ display: block; }}
+        .tab-content { display: none; width: 85%; margin: 0 auto; }
+        .tab-content.active { display: block; }
         
-        table {{ width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; margin-top: 15px; }}
-        th, td {{ padding: 14px; text-align: center; border-bottom: 1px solid #334155; font-size: 14px; }}
-        th {{ background: #1e1b4b; color: #38bdf8; font-weight: bold; }}
-        tr:hover {{ background: #334155; }}
+        table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; margin-top: 15px; }
+        th, td { padding: 14px; text-align: center; border-bottom: 1px solid #334155; font-size: 14px; }
+        th { background: #1e1b4b; color: #38bdf8; font-weight: bold; }
+        tr:hover { background: #334155; }
         
-        .alert-text {{ color: #ef4444; font-weight: bold; }}
-        .warning-text {{ color: #f59e0b; font-weight: bold; }}
-        .success-text {{ color: #10b981; font-weight: bold; }}
+        .alert-text { color: #ef4444; font-weight: bold; }
+        .warning-text { color: #f59e0b; font-weight: bold; }
+        .success-text { color: #10b981; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -135,10 +136,10 @@ html_content = f"""
     </div>
     
     <div class="grid">
-        <div class="card" style="width:200px;"><h3>Margin Debt</h3><p class="value">${debit/1000000:.3f} T</p></div>
-        <div class="card" style="width:200px;"><h3>Credit Balance</h3><p class="value" style="color:#f43f5e">${net_credit_balance/1000000:.3f} T</p></div>
-        <div class="card" style="width:200px;"><h3>Μεταβολή YoY</h3><p class="value" style="color:#f59e0b">{yearly_change:.2f}%</p></div>
-        <div class="card" style="width:200px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7">${fed_assets/1000000:.3f} T</p></div>
+        <div class="card" style="width:200px;"><h3>Margin Debt</h3><p class="value" id="val-debit">$0.000 T</p></div>
+        <div class="card" style="width:200px;"><h3>Credit Balance</h3><p class="value" style="color:#f43f5e" id="val-credit">$-0.000 T</p></div>
+        <div class="card" style="width:200px;"><h3>Μεταβολή YoY</h3><p class="value" style="color:#f59e0b" id="val-change">0.00%</p></div>
+        <div class="card" style="width:200px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7" id="val-fed">$0.000 T</p></div>
     </div>
 
     <div class="tab-container">
@@ -163,10 +164,10 @@ html_content = f"""
             <tbody>
                 <tr class="alert-text" style="background: rgba(239, 68, 68, 0.1);">
                     <td>Οκτώβριος 2026 (Σήμερα)</td>
-                    <td>${debit/1000000:.3f} T</td>
-                    <td>${net_credit_balance/1000000:.3f} T</td>
-                    <td>{yearly_change:.2f}%</td>
-                    <td>${fed_assets/1000000:.3f} T</td>
+                    <td id="t1-debit">$0.000 T</td>
+                    <td id="t1-credit">$-0.000 T</td>
+                    <td id="t1-change">0.00%</td>
+                    <td id="t1-fed">$0.000 T</td>
                     <td>🚨 Ακραία Μόχλευση (Σημερινή Κορυφή Φούσκας)</td>
                 </tr>
                 <tr class="alert-text">
@@ -183,7 +184,7 @@ html_content = f"""
                     <td>$-0.179 T</td>
                     <td>+35.20%</td>
                     <td>$0.850 T</td>
-                    <td>💥 Στέγνωμα ρευστότητας. Παгκόσμιο Κραχ 2008.</td>
+                    <td>💥 Στέγνωμα ρευστότητας. Παγκόσμιο Κραχ 2008.</td>
                 </tr>
                 <tr class="warning-text">
                     <td>Μάιος 2018 (Fed QT Hikes)</td>
