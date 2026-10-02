@@ -13,9 +13,9 @@ def get_finra_data():
         rows = table.find_all('tr')
         current_month_data = rows.find_all('td')
         
-        debit_margin = float(current_month_data.text.replace(',', ''))
-        free_cash = float(current_month_data.text.replace(',', ''))
-        margin_cash = float(current_month_data.text.replace(',', ''))
+        debit_margin = float(current_month_data[0].text.replace(',', ''))
+        free_cash = float(current_month_data[1].text.replace(',', ''))
+        margin_cash = float(current_month_data[2].text.replace(',', ''))
         prev_year_debit = 1060000.0
         
         return debit_margin, free_cash, margin_cash, prev_year_debit
@@ -47,7 +47,7 @@ if bot_token and chat_id:
     telegram_url = f"{base_url}/bot{bot_token}/sendMessage"
     payload = {"chat_id": chat_id, "text": message}
     try:
-        r = requests.post(telegram_url, json=payload)
+        requests.post(telegram_url, json=payload)
         print("Telegram notification sent successfully.")
     except Exception as e:
         print(f"Telegram error: {e}")
@@ -65,11 +65,12 @@ html_content = f"""
         .status {{ font-size: 24px; font-weight: bold; color: #ef4444; }}
         .value {{ font-size: 32px; font-weight: bold; color: #38bdf8; }}
         
-        table {{ width: 80%; margin: 20px auto; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; }}
-        th, td {{ padding: 14px; text-align: center; border-bottom: 1px solid #334155; }}
+        table {{ width: 85%; margin: 20px auto; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; }}
+        th, td {{ padding: 12px; text-align: center; border-bottom: 1px solid #334155; font-size: 14px; }}
         th {{ background: #1e1b4b; color: #38bdf8; font-weight: bold; }}
         tr:hover {{ background: #334155; }}
-        .alert-row {{ color: #ef4444; font-weight: bold; }}
+        .alert-row {{ color: #ef4444; font-weight: bold; background: rgba(239, 68, 68, 0.1); }}
+        .warning-row {{ color: #f59e0b; font-weight: bold; }}
     </style>
 </head>
 <body>
@@ -81,43 +82,29 @@ html_content = f"""
     </div>
     
     <div class="grid">
-        <div class="card" style="width:250px;"><h3>FINRA Margin Debt</h3><p class="value">${{debit/1000000:.3f}} T</p></div>
-        <div class="card" style="width:250px;"><h3>Net Credit Balance</h3><p class="value" style="color:#f43f5e">${{net_credit_balance/1000000:.3f}} T</p></div>
-        <div class="card" style="width:250px;"><h3>Ετήσια Μεταβολή</h3><p class="value" style="color:#f59e0b">${{yearly_change:.2f}}%</p></div>
+        <div class="card" style="width:250px;"><h3>FINRA Margin Debt</h3><p class="value">${debit/1000000:.3f} T</p></div>
+        <div class="card" style="width:250px;"><h3>Net Credit Balance</h3><p class="value" style="color:#f43f5e">${net_credit_balance/1000000:.3f} T</p></div>
+        <div class="card" style="width:250px;"><h3>Ετήσια Μεταβολή</h3><p class="value" style="color:#f59e0b">{yearly_change:.2f}%</p></div>
     </div>
 
-    <h2>📜 Ιστορικό Μηνιαίων Μετρήσεων & Σύγκριση</h2>
+    <h2>📜 Ιστορικός Πίνακας 20ετίας (Μεγάλα Ορόσημα & Κρίσεις)</h2>
     <table>
         <thead>
             <tr>
-                <th>Μήνας / Έτος</th>
+                <th>Έτος / Φάση Αγοράς</th>
                 <th>FINRA Margin Debt</th>
                 <th>Net Credit Balance</th>
                 <th>Ετήσια Μεταβολή</th>
-                <th>Κατάσταση Αγοράς</th>
+                <th>Συστημικό Αποτέλεσμα</th>
             </tr>
         </thead>
         <tbody>
             <tr class="alert-row">
                 <td>Τρέχων Μήνας (2026)</td>
-                <td>${{debit/1000000:.3f}} T</td>
-                <td>${{net_credit_balance/1000000:.3f}} T</td>
-                <td>${{yearly_change:.2f}}%</td>
-                <td>🚨 Υπερβολική Μόχλευση (Φούσκα)</td>
-            </tr>
-            <tr>
-                <td>Ιούλιος 2026</td>
-                <td>$1.380 T</td>
-                <td>$-0.980 T</td>
-                <td>+31.20%</td>
-                <td>🚨 Υψηλός Κίνδυνος</td>
-            </tr>
-            <tr>
-                <td>Ιανουάριος 2026</td>
-                <td>$1.210 T</td>
-                <td>$-0.790 T</td>
-                <td>+22.40%</td>
-                <td>⚠️ Προειδοποίηση</td>
+                <td>${debit/1000000:.3f} T</td>
+                <td>${net_credit_balance/1000000:.3f} T</td>
+                <td>{yearly_change:.2f}%</td>
+                <td>🚨 Ακραία Μόχλευση (Σημερινή Φούσκα)</td>
             </tr>
             <tr>
                 <td>Αύγουστος 2025</td>
@@ -126,12 +113,40 @@ html_content = f"""
                 <td>+8.50%</td>
                 <td>✅ Σταθερή Αγορά</td>
             </tr>
+            <tr class="alert-row">
+                <td>Κορυφή 2021 (Post-Covid Bubble)</td>
+                <td>$0.935 T</td>
+                <td>$-0.512 T</td>
+                <td>+42.10%</td>
+                <td>📉 Ακολούθησε η μεγάλη πτώση του 2022</td>
+            </tr>
             <tr>
-                <td>Ιανουάριος 2025</td>
-                <td>$0.950 T</td>
-                <td>$-0.480 T</td>
-                <td>+4.10%</td>
-                <td>✅ Υγιής Ανάπτυξη</td>
+                <td>Χαμηλά 2020 (Covid Crash)</td>
+                <td>$0.479 T</td>
+                <td>$-0.150 T</td>
+                <td>-12.30%</td>
+                <td>🛒 Ιδανικό Σημείο Αγοράς (Καθαρισμός Μόχλευσης)</td>
+            </tr>
+            <tr class="warning-row">
+                <td>Κορυφή 2018</td>
+                <td>$0.665 T</td>
+                <td>$-0.320 T</td>
+                <td>+15.40%</td>
+                <td>📉 Διόρθωση 20% στα τέλη του έτους</td>
+            </tr>
+            <tr class="alert-row">
+                <td>Κορυφή 2007 (Πριν την Κρίση)</td>
+                <td>$0.381 T</td>
+                <td>$-0.179 T</td>
+                <td>+35.20%</td>
+                <td>💥 Παγκόσμια Χρηματοπιστωτική Κρίση 2008</td>
+            </tr>
+            <tr>
+                <td>Ξεκίνημα Κύκλου (2005)</td>
+                <td>$0.225 T</td>
+                <td>$-0.065 T</td>
+                <td>+5.10%</td>
+                <td>✅ Υγιής Αγορά χωρίς Συστημικό Ρίσκο</td>
             </tr>
         </tbody>
     </table>
@@ -141,4 +156,4 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-print("Dashboard updated successfully with historical table!")
+print("Dashboard updated successfully with 20-year history table!")
