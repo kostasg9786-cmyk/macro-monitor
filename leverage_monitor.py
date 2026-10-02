@@ -11,10 +11,10 @@ def get_finra_data():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table')
-        current_month_data = table.find_all('tr')[1].find_all('td')
-        debit_margin = float(current_month_data[1].text.replace(',', ''))
-        free_cash = float(current_month_data[2].text.replace(',', ''))
-        margin_cash = float(current_month_data[3].text.replace(',', ''))
+        current_month_data = table.find_all('tr').find_all('td')
+        debit_margin = float(current_month_data[0].text.replace(',', ''))
+        free_cash = float(current_month_data[1].text.replace(',', ''))
+        margin_cash = float(current_month_data[2].text.replace(',', ''))
         prev_year_debit = 1060000.0
         return debit_margin, free_cash, margin_cash, prev_year_debit
     except Exception as e:
