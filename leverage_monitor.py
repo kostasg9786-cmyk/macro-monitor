@@ -13,9 +13,9 @@ def get_finra_data():
         rows = table.find_all('tr')
         current_month_data = rows.find_all('td')
         
-        debit_margin = float(current_month_data[0].text.replace(',', ''))
-        free_cash = float(current_month_data[1].text.replace(',', ''))
-        margin_cash = float(current_month_data[2].text.replace(',', ''))
+        debit_margin = float(current_month_data.text.replace(',', ''))
+        free_cash = float(current_month_data.text.replace(',', ''))
+        margin_cash = float(current_month_data.text.replace(',', ''))
         prev_year_debit = 1060000.0
         
         return debit_margin, free_cash, margin_cash, prev_year_debit
@@ -29,7 +29,6 @@ total_cash = cash1 + cash2
 net_credit_balance = total_cash - debit
 yearly_change = ((debit - past_debit) / past_debit) * 100
 
-# 4ος Πυλώνας: Federal Reserve Liquidity (FRED WALCL Σταθερά Δεδομένα 2026)
 fed_assets = 6743031.0  # $6.743 Τρισεκατομμύρια
 
 bot_token = os.environ.get("TELEGRAM_TOKEN")
@@ -72,18 +71,12 @@ html_content = f"""
         table {{ width: 85%; margin: 20px auto; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; }}
         th, td {{ padding: 14px; text-align: center; border-bottom: 1px solid #334155; font-size: 14px; }}
         th {{ background: #1e1b4b; color: #38bdf8; font-weight: bold; }}
-        tr {{ display: none; }}
-        .header-row {{ display: table-row !important; }}
+        tr {{ display: table-row; }}
         tr:hover {{ background: #334155; }}
         
         .alert-text {{ color: #ef4444; font-weight: bold; }}
         .warning-text {{ color: #f59e0b; font-weight: bold; }}
         .success-text {{ color: #10b981; font-weight: bold; }}
-        
-        .pagination {{ margin: 20px; display: flex; justify-content: center; gap: 15px; align-items: center; }}
-        .btn {{ background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }}
-        .btn:disabled {{ background: #475569; color: #94a3b8; cursor: not-allowed; }}
-        #pageInfo {{ font-weight: bold; color: #94a3b8; }}
     </style>
 </head>
 <body>
@@ -102,7 +95,7 @@ html_content = f"""
     </div>
 
     <h2>📜 Ιστορικά Ορόσημα 20ετίας (Μόχλευση Αγοράς vs Ρευστότητα Fed)</h2>
-    <table id="historyTable">
+    <table>
         <thead>
             <tr class="header-row">
                 <th>Φάση Αγοράς / Ιστορικό Ορόσημο</th>
@@ -164,50 +157,10 @@ html_content = f"""
             </tr>
         </tbody>
     </table>
-
-    <div class="pagination">
-        <button class="btn" id="prevBtn" onclick="prevPage()">⏮️ Προηγούμενη</button>
-        <span id="pageInfo">Σελίδα 1</span>
-        <button class="btn" id="nextBtn" onclick="nextPage()">Επόμενη ⏭️</button>
-    </div>
-
-    <script>
-        let currentPage = 1;
-        const rowsPerPage = 4; 
-        const table = document.getElementById("historyTable");
-        const tbody = table.getElementsByTagName("tbody");
-        const rows = tbody.getElementsByTagName("tr");
-        const totalPages = Math.ceil(rows.length / rowsPerPage);
-
-        function showPage(page) {{
-            if (page < 1) page = 1;
-            if (page > totalPages) page = totalPages;
-            currentPage = page;
-
-            for (let i = 0; i < rows.length; i++) {{
-                rows[i].style.display = "none";
-            }}
-
-            let start = (page - 1) * rowsPerPage;
-            let end = start + rowsPerPage;
-            for (let i = start; i < end && i < rows.length; i++) {{
-                rows[i].style.display = "table-row";
-            }}
-
-            document.getElementById("pageInfo").innerText = "Σελίδα " + page + " από " + totalPages;
-            document.getElementById("prevBtn").disabled = (page === 1);
-            document.getElementById("nextBtn").disabled = (page === totalPages);
-        }}
-
-        function prevPage() {{ showPage(currentPage - 1); }}
-        function nextPage() {{ showPage(currentPage + 1); }}
-
-        showPage(1);
-    </script>
 </body>
 </html>
 """
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-print("Institutional Dashboard with 4 Pillars created successfully!")
+print("Clean Institutional Dashboard created successfully!")
