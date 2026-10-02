@@ -82,7 +82,7 @@ if bot_token and chat_id:
     except:
         pass
 
-# Δημιουργία των σειρών για το Εβδομαδιαίο Ραντάρ
+# Δημιουργία των σειρών για το Εβδομαδιαίο Ραντάρ (Καρτέλα 3)
 weekly_rows = ""
 for row in reversed(history_data):
     status_class = "alert-text" if row['change'] > 30 else "warning-text" if row['change'] > 15 else "success-text"
@@ -108,7 +108,6 @@ html_content = f"""
         .grid {{ display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }}
         .value {{ font-size: 28px; font-weight: bold; color: #38bdf8; }}
         
-        /* Στυλ για τα Κουμπιά/Tabs */
         .tab-container {{ margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 85%; }}
         .tab-btn {{ background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }}
         .tab-btn:hover {{ border-color: #38bdf8; color: #f8fafc; }}
@@ -142,7 +141,6 @@ html_content = f"""
         <div class="card" style="width:200px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7">${fed_assets/1000000:.3f} T</p></div>
     </div>
 
-    <!-- Τα 3 Κουμπιά Επιλογής Οθόνης -->
     <div class="tab-container">
         <button class="tab-btn active" onclick="switchTab('tab1')">🏛️ 1. Ιστορικά Ορόσημα Κρίσεων</button>
         <button class="tab-btn" onclick="switchTab('tab2')">📅 2. Μηνιαία Εξέλιξη Κύκλου</button>
