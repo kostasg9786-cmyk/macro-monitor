@@ -9,7 +9,8 @@
         .grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
         .value { font-size: 28px; font-weight: bold; color: #38bdf8; }
         .tab-container { margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 85%; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }
+        .tab-btn:hover { border-color: #38bdf8; color: #f8fafc; }
         .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
         .tab-content { display: none; width: 85%; margin: 0 auto; }
         .tab-content.active { display: block; }
@@ -81,7 +82,7 @@
     <script>
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => content.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById(tabId).classList.add('active');
         }
