@@ -33,7 +33,7 @@ yearly_change = ((debit - past_debit) / past_debit) * 100
 
 # Αποστολή Telegram Alert αν η ετήσια μεταβολή ξεπερνά το 30%
 THRESHOLD = 30.0
-if yearly_change > THRESHOLD:
+if True:
     bot_token = os.environ.get("TELEGRAM_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     
