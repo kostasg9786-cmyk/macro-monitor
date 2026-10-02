@@ -31,26 +31,26 @@ total_cash = cash1 + cash2
 net_credit_balance = total_cash - debit
 yearly_change = ((debit - past_debit) / past_debit) * 100
 
-# Αποστολή Telegram Alert αν η ετήσια μεταβολή ξεπερνά το 30%
-THRESHOLD = 30.0
-if True:
-    bot_token = "8860882312:AAH7ajKz8IWICNovLrZaT4RXzkUmT6faDBM"
-    chat_id = "6771777895"
-    
-    if bot_token and chat_id:
-        message = (
-            f"🚨 ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ: Ακραία Μόχλευση στην Αγορά!\n\n"
-            f"Τρέχον Χρέος Margin: ${debit/1000000:.3f} Τρις\n"
-            f"Ετήσια Μεταβολή: {yearly_change:.2f}% (Όριο: 30%)\n"
-            f"Net Credit Balance: ${net_credit_balance/1000000:.3f} Τρις\n\n"
-            f"Το συστημικό ρίσκο forced selling είναι εξαιρετικά υψηλό."
-        )
-        telegram_url = f"https://telegram.org{bot_token}/sendMessage"
-        try:
-            requests.post(telegram_url, data={{"chat_id": chat_id, "text": message}})
-            print("Το Telegram Alert στάλθηκε επιτυχώς!")
-        except Exception as e:
-            print(f"Αποτυχία αποστολής Telegram: {e}")
+# Αποστολή στο Telegram (Σταθερή μηνιαία ενημέρωση)
+bot_token = os.environ.get("TELEGRAM_TOKEN")
+chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+
+if bot_token and chat_id:
+    message = (
+        f"📊 ΜΗΝΙΑΙΑ ΕΝΗΜΕΡΩΣΗ ΜΟΧΛΕΥΣΗΣ\n\n"
+        f"🚨 Κατάσταση: ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ\n"
+        f"• Χρέος Margin: ${debit/1000000:.3f} Τρις\n"
+        f"• Net Credit Balance: ${net_credit_balance/1000000:.3f} Τρις\n"
+        f"• Ετήσια Μεταβολή: {yearly_change:.2f}% (Όριο: 30%)\n\n"
+        f"Δείτε το Live Dashboard: https://github.io"
+    )
+    telegram_url = f"https://telegram.org{bot_token}/sendMessage"
+    payload = {"chat_id": chat_id, "text": message}
+    try:
+        requests.post(telegram_url, data=payload)
+        print("Telegram notification trigger sent successfully.")
+    except Exception as e:
+        print(f"Telegram error: {e}")
 
 # Δημιουργία του HTML Dashboard
 html_content = f"""
@@ -71,7 +71,7 @@ html_content = f"""
     <h1>📊 Macro Leverage & Balance-Sheet Monitor</h1>
     <div class="card">
         <h2>Συστημική Κατάσταση Κινδύνου</h2>
-        <p class="status">{"⚠️ ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ (Υψηλό Ρίσκο Κραχ)" if yearly_change > 30 else "✅ ΣΤΑΘΕΡΟ ΧΑΡΤΟΦΥΛΑΚΙΟ"}</p>
+        <p class="status">⚠️ ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ (Υψηλό Ρίσκο Κραχ)</p>
     </div>
     <div class="grid">
         <div class="card" style="width:250px;"><h3>FINRA Margin Debt</h3><p class="value">${debit/1000000:.3f} T</p></div>
