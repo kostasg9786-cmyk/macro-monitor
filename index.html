@@ -2,17 +2,17 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <title>Institutional Macro Matrix</title>
+    <title>Institutional Trading Matrix</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; text-align: center; }
-        .card { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 20px; display: inline-block; width: 85%; }
+        .card { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 20px; display: inline-block; width: 90%; }
         .grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 30px; }
         .value { font-size: 24px; font-weight: bold; color: #38bdf8; }
-        .tab-container { margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 85%; }
+        .tab-container { margin: 30px auto; display: flex; justify-content: center; gap: 15px; width: 90%; }
         .tab-btn { background: #1e293b; color: #94a3b8; border: 2px solid #334155; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }
         .tab-btn:hover { border-color: #38bdf8; color: #f8fafc; }
         .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
-        .tab-content { display: none; width: 85%; margin: 0 auto; }
+        .tab-content { display: none; width: 90%; margin: 0 auto; }
         .tab-content.active { display: block; }
         table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; margin-top: 15px; }
         th, td { padding: 14px; text-align: center; border-bottom: 1px solid #334155; font-size: 13px; }
@@ -24,19 +24,19 @@
     </style>
 </head>
 <body>
-    <h1>📊 Institutional Macro Leverage & Liquidity Matrix</h1>
+    <h1>📊 Institutional Multi-Asset Trading Matrix (BTC, NQ, S&P)</h1>
     <div class="card">
-        <h2>Συστημική Κατάσταση Κινδύνου</h2>
-        <p class="alert-text" style="font-size:24px;">⚠️ ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ (Ακραία Μόχλευση & Ποσοτική Σύσφιξη Fed)</p>
+        <h2>Συστημική Κατάσταση Κινδύνου &amp; 🚨 RYCEP Framework</h2>
+        <p class="alert-text" style="font-size:24px;">⚠️ ΚΟΚΚΙΝΟΣ ΣΥΝΑΓΕΡΜΟΣ (Ακραίο 🔏 Positioning &amp; Απόσυρση Ρευστότητας Fed)</p>
     </div>
     
     <div class="grid">
-        <div class="card" style="width:160px;"><h3>Margin Debt</h3><p class="value" id="cur-debit">-</p></div>
-        <div class="card" style="width:160px;"><h3>Credit Balance</h3><p class="value" style="color:#f43f5e" id="cur-credit">-</p></div>
-        <div class="card" style="width:160px;"><h3>Μεταβολή YoY</h3><p class="value" style="color:#f59e0b" id="cur-change">-</p></div>
-        <div class="card" style="width:160px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7" id="cur-fed">-</p></div>
-        <div class="card" style="width:160px;"><h3>US 10Y Bond</h3><p class="value" style="color:#f59e0b" id="cur-bond">-</p></div>
-        <div class="card" style="width:160px;"><h3>Junk Spread</h3><p class="value" style="color:#ef4444" id="cur-spread">-</p></div>
+        <div class="card" style="width:140px;"><h3>Margin Debt</h3><p class="value" id="cur-debit">-</p></div>
+        <div class="card" style="width:140px;"><h3>Credit Balance</h3><p class="value" style="color:#f43f5e" id="cur-credit">-</p></div>
+        <div class="card" style="width:140px;"><h3>Μεταβολή YoY</h3><p class="value" style="color:#f59e0b" id="cur-change">-</p></div>
+        <div class="card" style="width:140px;"><h3>Fed Assets</h3><p class="value" style="color:#a855f7" id="cur-fed">-</p></div>
+        <div class="card" style="width:140px;"><h3>S&amp;P 500 P/E</h3><p class="value" style="color:#e11d48" id="cur-pe">-</p></div>
+        <div class="card" style="width:140px;"><h3>BTC Funding</h3><p class="value" style="color:#65a30d" id="cur-funding">-</p></div>
     </div>
 
     <div class="tab-container">
@@ -49,15 +49,14 @@
     <div id="tab1" class="tab-content active">
         <table>
             <thead>
-                <tr><th>Ιστορική Φάση / Ορόσημο</th><th>FINRA Margin Debt</th><th>Net Credit Balance</th><th>Ετήσια Μεταβολή</th><th>Fed Assets</th><th>US 10Y Yield</th><th>Junk Spread</th><th>Συστημικό Αποτέλεσμα / Στρατηγική</th></tr>
+                <tr><th>Ιστορική Φάση / Ορόσημο</th><th>Margin Debt</th><th>Net Credit</th><th>Μεταβολή YoY</th><th>Fed Assets</th><th>S&amp;P 500 P/E</th><th>BTC Funding</th><th>Στρατηγική Trading</th></tr>
             </thead>
             <tbody>
-                <tr class="alert-text" style="background: rgba(239, 68, 68, 0.1);"><td>Τρέχων Μήνας (Σήμερα)</td><td class="live-debit">-</td><td class="live-credit">-</td><td class="live-change">-</td><td class="live-fed">-</td><td class="live-bond">-</td><td class="live-spread">-</td><td>🚨 Ακραία Μόχλευση (Σημερινή Κορυφή Φούσκας)</td></tr>
-                <tr class="alert-text"><td>Οκτώβριος 2021 (Post-Covid Peak)</td><td>\$0.935 T</td><td>\(-0.512 T</td><td>+42.10\%</td><td>\)8.560 T</td><td>1.55%</td><td>3.10%</td><td>💥 Κορυφή Φούσκας. Ακολούθησε η Bear Market του 2022.</td></tr>
-                <tr class="alert-text"><td>Ιούλιος 2007 (Pre-GFC Peak)</td><td>\$0.381 T</td><td>\(-0.179 T</td><td>+35.20\%</td><td>\)0.850 T</td><td>5.10%</td><td>3.35%</td><td>💥 Στέγνωμα ρευστότητας. Παγκόσμιο Κραχ 2008.</td></tr>
-                <tr class="warning-text"><td>Μάιος 2018 (Fed QT Hikes)</td><td>\$0.665 T</td><td>\(-0.320 T</td><td>+15.40\%</td><td>\)4.320 T</td><td>3.05%</td><td>3.60%</td><td>📉 Ποσοτική σύσφιξη. Διόρθωση -20% στις μετοχές.</td></tr>
-                <tr class="success-text"><td>Μάρτιος 2020 (Covid Crash)</td><td>\$0.479 T</td><td>\(-0.150 T</td><td>-12.30\%</td><td>\)5.250 T</td><td>0.70%</td><td>8.60%</td><td>🛒 Η Fed τύπωσε \$3Τρς. ΤΕΛΕΙΟ ΣΗΜΕΙΟ ΑΓΟΡΑΣ ETFs.</td></tr>
-                <tr class="success-text"><td>Φεβρουάριος 2009 (GFC Bottom)</td><td>\$0.296 T</td><td>\(-0.045 T</td><td>-22.30\%</td><td>\)1.950 T</td><td>2.90%</td><td>10.20%</td><td>🛒 Ιστορικός Πάτος Ευκαιρίας. Εκτίναξη Spreads.</td></tr>
+                <tr class="alert-text" style="background: rgba(239, 68, 68, 0.1);"><td>Τρέχουσα Συγκυρία (Σήμερα)</td><td class="live-debit">-</td><td class="live-credit">-</td><td class="live-change">-</td><td class="live-fed">-</td><td class="live-pe">-</td><td class="live-funding">-</td><td>🚨 Ακραία Μόχλευση (Υψηλό Ρίσκο για Long Squeeze)</td></tr>
+                <tr class="alert-text"><td>Οκτώβριος 2021 (Peak)</td><td>\$0.935 T</td><td>\(-0.512 T</td><td>+42.10\%</td><td>\)8.560 T</td><td>38.50</td><td>0.060%</td><td>💥 Ιστορική Κορυφή. Short σήμα σε NQ και S&amp;P 500.</td></tr>
+                <tr class="alert-text"><td>Ιούλιος 2007 (Peak)</td><td>\$0.381 T</td><td>\(-0.179 T</td><td>+35.20\%</td><td>\)0.850 T</td><td>27.30</td><td>-</td><td>💥 Κραχ Στεγνώματος. </td></tr>
+                <tr class="success-text"><td>Μάρτιος 2020 (Crash)</td><td>\$0.479 T</td><td>\(-0.150 T</td><td>-12.30\%</td><td>\)5.250 T</td><td>24.10</td><td>-0.030%</td><td>🛒 Αγορά Spot &amp; Long Futures (Η Fed ξεκίνησε τύπωμα).</td></tr>
+                <tr class="success-text"><td>Φεβρουάριος 2009 (Bottom)</td><td>\$0.296 T</td><td>\(-0.045 T</td><td>-22.30\%</td><td>\)1.950 T</td><td>15.10</td><td>-</td><td>🛒 Οριστικός Πάτος Κύκλου 20ετίας.</td></tr>
             </tbody>
         </table>
     </div>
@@ -66,16 +65,13 @@
     <div id="tab2" class="tab-content">
         <table>
             <thead>
-                <tr><th>Μήνας / Έτος</th><th>FINRA Margin Debt</th><th>Net Credit Balance</th><th>Ετήσια Μεταβολή</th><th>Fed Assets</th><th>US 10Y Yield</th><th>Junk Spread</th><th>Ανάλυση Πορείας Κύκλου</th></tr>
+                <tr><th>Μήνας / Έτος</th><th>Margin Debt</th><th>Net Credit</th><th>Μεταβολή YoY</th><th>Fed Assets</th><th>S&amp;P 500 P/E</th><th>BTC Funding</th><th>Κατάσταση Αγοράς</th></tr>
             </thead>
             <tbody>
-                <tr class="alert-text"><td>Οκτώβριος 2026</td><td class="live-debit">-</td><td class="live-credit">-</td><td class="live-change">-</td><td class="live-fed">-</td><td class="live-bond">-</td><td class="live-spread">-</td><td>🚨 Κορυφή Μανίας</td></tr>
-                <tr class="alert-text"><td>Σεπτέμβριος 2026</td><td>\$1.410 T</td><td>\(-0.990 T</td><td>+34.20\%</td><td>\)6.790 T</td><td>4.20%</td><td>4.10%</td><td>🚨 Διόγκωση Χρέους & Απόσυρση Ξένων Κρατών</td></tr>
-                <tr class="alert-text"><td>Αύγουστος 2026</td><td>\$1.390 T</td><td>\(-0.950 T</td><td>+31.50\%</td><td>\)6.820 T</td><td>4.05%</td><td>3.95%</td><td>🚨 Παραβίαση Ορίου Ασφαλείας 30%</td></tr>
-                <tr class="warning-text"><td>Ιούνιος 2026</td><td>\$1.290 T</td><td>\(-0.850 T</td><td>+25.40\%</td><td>\)6.910 T</td><td>3.85%</td><td>3.70%</td><td>⚠️ Επιτάχυνση Μόχλευσης</td></tr>
-                <tr class="warning-text"><td>Μάρτιος 2026</td><td>\$1.210 T</td><td>\(-0.790 T</td><td>+21.10\%</td><td>\)7.050 T</td><td>3.65%</td><td>3.50%</td><td>⚠️ Είσοδος σε Ζώνη Κινδύνου</td></tr>
-                <tr class="success-text"><td>Δεκέμβριος 2025</td><td>\$1.090 T</td><td>\(-0.650 T</td><td>+11.20\%</td><td>\)7.200 T</td><td>3.50%</td><td>3.40%</td><td>✅ Υγιής Κύκλος</td></tr>
-                <tr class="success-text"><td>Οκτώβριος 2025</td><td>\$1.060 T</td><td>\(-0.620 T</td><td>+8.50\%</td><td>\)7.310 T</td><td>3.45%</td><td>3.42%</td><td>✅ Αφετηρία Μόχλευσης</td></tr>
+                <tr class="alert-text"><td>Οκτώβριος 2026</td><td class="live-debit">-</td><td class="live-credit">-</td><td class="live-change">-</td><td class="live-fed">-</td><td class="live-pe">-</td><td class="live-funding">-</td><td>🚨 Κορυφή Μανίας - Αποφυγή Επιθετικών Longs</td></tr>
+                <tr class="alert-text"><td>Σεπτέμβριος 2026</td><td>\$1.410 T</td><td>\(-0.990 T</td><td>+34.20\%</td><td>\)6.790 T</td><td>33.80</td><td>0.045%</td><td>🚨 Υπερτιμημένα Κέρδη &amp; Μόχλευση στα Futures</td></tr>
+                <tr class="alert-text"><td>Αύγουστος 2026</td><td>\$1.390 T</td><td>\(-0.950 T</td><td>+31.50\%</td><td>\)6.820 T</td><td>32.10</td><td>0.035%</td><td>🚨 Παραβίαση Ορίου 30% - Επικίνδυνα Trades</td></tr>
+                <tr class="warning-text"><td>Ιούνιος 2026</td><td>\$1.290 T</td><td>\(-0.850 T</td><td>+25.40\%</td><td>\)6.910 T</td><td>29.50</td><td>0.020%</td><td>⚠️ Επιτάχυνση Μόχλευσης Futures</td></tr>
             </tbody>
         </table>
     </div>
@@ -84,7 +80,7 @@
     <div id="tab3" class="tab-content">
         <table>
             <thead>
-                <tr><th>Ημερομηνία Καταγραφής</th><th>FINRA Margin Debt</th><th>Net Credit Balance</th><th>Ετήσια Μεταβολή</th><th>Fed Total Assets</th><th>US 10Y Yield</th><th>Junk Spread</th></tr>
+                <tr><th>Ημερομηνία</th><th>Margin Debt</th><th>Net Credit</th><th>Μεταβολή YoY</th><th>Fed Assets</th><th>S&amp;P P/E</th><th>BTC Funding</th></tr>
             </thead>
             <tbody id="weekly-radar-rows"></tbody>
         </table>
@@ -102,23 +98,23 @@
             document.getElementById('cur-credit').innerText = data.credit;
             document.getElementById('cur-change').innerText = data.change;
             document.getElementById('cur-fed').innerText = data.fed;
-            document.getElementById('cur-bond').innerText = data.bond;
-            document.getElementById('cur-spread').innerText = data.spread;
+            document.getElementById('cur-pe').innerText = data.pe;
+            document.getElementById('cur-funding').innerText = data.funding;
             
             document.querySelectorAll('.live-debit').forEach(el => el.innerText = data.debit);
             document.querySelectorAll('.live-credit').forEach(el => el.innerText = data.credit);
             document.querySelectorAll('.live-change').forEach(el => el.innerText = data.change);
             document.querySelectorAll('.live-fed').forEach(el => el.innerText = data.fed);
-            document.querySelectorAll('.live-bond').forEach(el => el.innerText = data.bond);
-            document.querySelectorAll('.live-spread').forEach(el => el.innerText = data.spread);
+            document.querySelectorAll('.live-pe').forEach(el => el.innerText = data.pe);
+            document.querySelectorAll('.live-funding').forEach(el => el.innerText = data.funding);
             
             let wRows = "";
             let historyLog = data.history ? [...data.history].reverse() : [];
             historyLog.forEach(row => {
                 let cls = row.change > 30 ? "alert-text" : row.change > 15 ? "warning-text" : "success-text";
-                let bVal = row.bond ? row.bond.toFixed(2) + '%' : '-';
-                let sVal = row.spread ? row.spread.toFixed(2) + '%' : '-';
-                wRows += `<tr class="${cls}"><td>${row.date}</td><td>$${(row.debit/1000000).toFixed(3)} T</td><td>$${(row.net_credit/1000000).toFixed(3)} T</td><td>${row.change.toFixed(2)}%</td><td>$${(row.fed/1000000).toFixed(3)} T</td><td>${bVal}</td><td>${sVal}</td></tr>`;
+                let peVal = row.pe ? row.pe.toFixed(2) : '-';
+                let fVal = row.funding ? row.funding.toFixed(3) + '%' : '-';
+                wRows += `<tr class="${cls}"><td>${row.date}</td><td>$${(row.debit/1000000).toFixed(3)} T</td><td>$${(row.net_credit/1000000).toFixed(3)} T</td><td>${row.change.toFixed(2)}%</td><td>$${(row.fed/1000000).toFixed(3)} T</td><td>${peVal}</td><td>${fVal}</td></tr>`;
             });
             document.getElementById('weekly-radar-rows').innerHTML = wRows;
         }).catch(e => console.log(e));
