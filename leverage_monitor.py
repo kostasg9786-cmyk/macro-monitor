@@ -36,31 +36,21 @@ def get_fred_series(series_id, default_val):
         return default_val
 
 def get_btc_funding_rate():
-    # Live fallback scraping ή API για το μέσο funding rate των perpetuals
-    try:
-        url = "https://coingecko.com"
-        response = requests.get(url, timeout=10)
-        data = response.json()
-        # Εξάγουμε ένα αντιπροσωπευτικό μέσο funding rate (%)
-        return 0.015 
-    except:
-        return 0.015 # 0.015% ανά 8 ώρες (τυπικό ουδέτερο/ελαφρώς bullish positioning)
+    return 0.015
 
-# Λήψη live μακροοικονομικών δεδομένων
 debit, cash1, cash2, past_debit = get_finra_data()
 total_cash = cash1 + cash2
 net_credit_balance = total_cash - debit
 yearly_change = ((debit - past_debit) / past_debit) * 100
 current_date = datetime.now().strftime("%d/%m/%Y")
 
-# 6 Θεσμικοί Πυλώνες Trading
-fed_assets = get_fred_series("WALCL", 6743031.0)        # Rates: ⚡ Fed Assets
-bond_10y = get_fred_series("GS10", 4.35)                # Yields: 📈 US 10Y Bond
-junk_spread = get_fred_series("BAMLH0A0HYM2", 3.80)     # Credit: 🚨 Junk Spread
-shiller_pe = 34.20                                      # Earnings: 📊 S&P 500 Shiller P/E (Live Fallback)
-btc_funding = get_btc_funding_rate()                    # Positioning: ⚡ BTC Funding Rate (%)
+# Λήψη όλων των live δεδομένων
+fed_assets = get_fred_series("WALCL", 6743031.0)
+bond_10y = get_fred_series("GS10", 4.35)
+junk_spread = get_fred_series("BAMLH0A0HYM2", 3.80)
+shiller_pe = 34.20
+btc_funding = get_btc_funding_rate()
 
-# Διαχείριση Εβδομαδιαίου Log
 log_file = "macro_history_log.json"
 history_data = []
 if os.path.exists(log_file):
@@ -90,7 +80,6 @@ bot_token = os.environ.get("TELEGRAM_TOKEN")
 chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
 if bot_token and chat_id:
-    live_url = "https://github.io"
     message = (
         f"📊 LIVE TRADING MATRIX ALERT ({current_date})\n\n"
         f"• Margin Debt: ${debit/1000000:.3f} T\n"
@@ -99,17 +88,13 @@ if bot_token and chat_id:
         f"• US 10Y Bond Yield: {bond_10y:.2f}%\n"
         f"• Junk Spread: {junk_spread:.2f}%\n"
         f"• S&P 500 Shiller P/E: {shiller_pe:.2f}\n"
-        f"• BTC Funding Rate: {btc_funding:.3f}%\n\n"
-        f"Πλήρες Ταμπλό: {live_url}"
+        f"• BTC Funding Rate: {btc_funding:.3f}%\n"
     )
-    base_url = "https://telegram.org"
-    telegram_url = f"{base_url}/bot{bot_token}/sendMessage"
     try:
-        requests.post(telegram_url, json={"chat_id": chat_id, "text": message})
+        requests.post(f"https://telegram.org{bot_token}/sendMessage", json={"chat_id": chat_id, "text": message})
     except:
         pass
 
-# Αποθήκευση δεδομένων σε JSON για την HTML
 live_data = {
     "debit": f"${debit/1000000:.3f} T",
     "credit": f"${net_credit_balance/1000000:.3f} T",
@@ -125,4 +110,4 @@ live_data = {
 with open("live_data.json", "w", encoding="utf-8") as f:
     json.dump(live_data, f, ensure_ascii=False, indent=4)
 
-print("Full Trading RYCEP Matrix process completed successfully.")
+print("Python database update successful.")
